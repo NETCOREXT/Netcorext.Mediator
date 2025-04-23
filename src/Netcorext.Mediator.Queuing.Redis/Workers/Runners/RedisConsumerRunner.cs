@@ -36,12 +36,14 @@ internal class RedisConsumerRunner : IWorkerRunner<ConsumerWorker>
     {
         var channels = await _redis.RegisterConsumerAsync(_mediatorOptions.ServiceMaps, _options.Prefix, _options.GroupName, _options.MachineName, _options.GroupNewestId);
 
-        await _queuing.SubscribeAsync(channels.ToArray(), (s, o) =>
-                                                          {
-                                                              ReadStreamAsync(o.ToString()!, cancellationToken)
-                                                                 .GetAwaiter()
-                                                                 .GetResult();
-                                                          }, cancellationToken);
+        await _queuing.SubscribeAsync(channels.ToArray(), Handler, cancellationToken);
+
+        return;
+
+        async void Handler(string s, object o)
+        {
+            await ReadStreamAsync(o.ToString()!, cancellationToken);
+        }
     }
 
     private async Task ReadStreamAsync(string key, CancellationToken cancellationToken = default)
