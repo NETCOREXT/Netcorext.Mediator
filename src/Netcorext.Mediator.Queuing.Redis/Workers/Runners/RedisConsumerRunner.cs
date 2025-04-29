@@ -21,7 +21,7 @@ internal class RedisConsumerRunner : IWorkerRunner<ConsumerWorker>
 
     public RedisConsumerRunner(IServiceProvider serviceProvider, MediatorOptions mediatorOptions, IQueuing queuing, RedisOptions options, ISerializer serializer, ILogger<RedisConsumerRunner> logger)
     {
-        _locker = new KeyLocker(logger, maxConcurrent: options.WorkerTaskLimit ?? RedisOptions.DEFAULT_WORKER_TASK_LIMIT);
+        _locker = new KeyLocker(logger, maxConcurrent: options.WorkerTaskLimit ?? RedisOptions.DEFAULT_WORKER_TASK_LIMIT, cleanupInterval: TimeSpan.FromMilliseconds(options.LockerCleanupInterval ?? RedisOptions.DEFAULT_LOCKER_CLEANUP_INTERVAL));
 
         _queuing = (RedisQueuing)queuing;
         _redis = _queuing.Redis;
