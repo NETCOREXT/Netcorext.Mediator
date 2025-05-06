@@ -5,6 +5,7 @@ namespace Netcorext.Mediator.Queuing.Redis;
 public class RedisOptions
 {
     public const int DEFAULT_HEALTH_CHECK_INTERVAL = 60 * 1000;
+    public const int DEFAULT_PENDING_CHECK_INTERVAL = 60 * 1000;
     public const int DEFAULT_RETRY_LIMIT = 3;
     public const int DEFAULT_SLOW_COMMAND_TIMES = 150;
     public const int DEFAULT_STREAM_BATCH_SIZE = 50;
@@ -27,5 +28,6 @@ public class RedisOptions
     public int? WorkerTaskLimit { get; set; } = DEFAULT_WORKER_TASK_LIMIT;
     public int? RetryLimit { get; set; } = DEFAULT_RETRY_LIMIT;
     public int? HealthCheckInterval { get; set; } = DEFAULT_HEALTH_CHECK_INTERVAL;
+    public int? PendingCheckInterval { get; set; } = DEFAULT_PENDING_CHECK_INTERVAL;
     public int? LockerCleanupInterval { get; set; } = DEFAULT_LOCKER_CLEANUP_INTERVAL;
 }

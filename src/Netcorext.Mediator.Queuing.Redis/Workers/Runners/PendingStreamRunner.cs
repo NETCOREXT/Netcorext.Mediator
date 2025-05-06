@@ -1,6 +1,5 @@
 using FreeRedis;
 using Microsoft.Extensions.Logging;
-using Netcorext.Extensions.Linq;
 using Netcorext.Mediator.Queuing.Redis.Extensions;
 using Netcorext.Mediator.Queuing.Redis.Helpers;
 using Netcorext.Mediator.Queuing.Redis.Utilities;
@@ -35,7 +34,7 @@ internal class PendingStreamRunner : IWorkerRunner<ConsumerWorker>
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            await Task.Delay(_options.StreamIdleTime ?? RedisOptions.DEFAULT_STREAM_IDLE_TIME, cancellationToken);
+            await Task.Delay(_options.PendingCheckInterval ?? RedisOptions.DEFAULT_PENDING_CHECK_INTERVAL, cancellationToken);
 
             if (!await _locker.WaitAsync(0, cancellationToken))
                 continue;
@@ -144,8 +143,10 @@ internal class PendingStreamRunner : IWorkerRunner<ConsumerWorker>
         var pendingConsumers = consumers.Where(t => t.name != _options.MachineName && t.idle > _options.StreamIdleTime)
                                         .ToArray();
 
-        if (pendingConsumers.Any())
-            pendingConsumers.ForEach(async t => await _redis.XGroupDelConsumerAsync(streamKey, _options.GroupName, t.name));
+        foreach (var consumer in pendingConsumers)
+        {
+            await _redis.XGroupDelConsumerAsync(streamKey, _options.GroupName, consumer.name);
+        }
     }
 
     public void Dispose()
