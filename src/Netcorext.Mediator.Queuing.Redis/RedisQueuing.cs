@@ -92,7 +92,7 @@ internal class RedisQueuing : IQueuing, IDisposable
             stopwatch.Stop();
 
             if (stopwatch.ElapsedMilliseconds > Options.SlowCommandTimes)
-                _logger.LogWarning("'{Name}' processing too slow, elapsed: {StopwatchElapsed}", nameof(PublishAsync), stopwatch.Elapsed);
+                _logger.LogWarning("'{Name}' processing too slow, elapsed: {StopwatchElapsed}, key: {Key}", nameof(PublishAsync)stopwatch.Elapsed, key);
         }
     }
 
@@ -117,7 +117,7 @@ internal class RedisQueuing : IQueuing, IDisposable
             stopwatch.Stop();
 
             if (stopwatch.ElapsedMilliseconds > Options.SlowCommandTimes)
-                _logger.LogWarning("'{Name}' processing too slow, elapsed: {StopwatchElapsed}", nameof(SubscribeAsync), stopwatch.Elapsed);
+                _logger.LogWarning("'{Name}' processing too slow, elapsed: {StopwatchElapsed}, channels: {Channels}", nameof(SubscribeAsync), stopwatch.Elapsed, string.Join(' ', channels));
         }
 
         return Task.CompletedTask;
